@@ -121,7 +121,7 @@ public class CropImageActivity extends MonitoredActivity {
     private void loadInput() {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        Bitmap initialBitmap ;
+        Bitmap initialBitmap;
 
         if (extras != null) {
             aspectX = extras.getInt(Crop.Extra.ASPECT_X);
@@ -133,7 +133,7 @@ public class CropImageActivity extends MonitoredActivity {
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            Pair<Integer,Integer> exifRotationTrans =
+            Pair<Integer, Integer> exifRotationTrans =
                     CropUtil.getExifRotationTranslation(
                             CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
             exifRotation = exifRotationTrans.first;
@@ -145,10 +145,13 @@ public class CropImageActivity extends MonitoredActivity {
                 BitmapFactory.Options option = new BitmapFactory.Options();
                 option.inSampleSize = sampleSize;
                 initialBitmap = BitmapFactory.decodeStream(is, null, option);
+                if (initialBitmap == null) {
+                    throw new IOException();
+                }
                 int drawHeight = initialBitmap.getHeight();
                 int drawWidth = initialBitmap.getWidth();
                 if ((exifRotation != 0) || (exifScale != 1)) {
-                    Matrix matrix = new Matrix() ;
+                    Matrix matrix = new Matrix();
                     if (exifRotation != 0) {
                         matrix.preRotate(exifRotation);
                     }
@@ -157,7 +160,7 @@ public class CropImageActivity extends MonitoredActivity {
                     }
                     srcBitmap = Bitmap.createBitmap(initialBitmap, 0, 0, drawWidth, drawHeight, matrix, true);
                 } else {
-                    srcBitmap = initialBitmap ;
+                    srcBitmap = initialBitmap;
                 }
             } catch (IOException e) {
                 Log.e("Error reading image: " + e.getMessage(), e);
@@ -168,8 +171,7 @@ public class CropImageActivity extends MonitoredActivity {
             } finally {
                 CropUtil.closeSilently(is);
             }
-        }
-        else {
+        } else {
             Log.e("Source URI is null");
         }
     }
@@ -343,10 +345,10 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private Bitmap decodeRegionCrop(Rect rect, int outWidth, int outHeight) {
-	Matrix matrix = new Matrix();
+        Matrix matrix = new Matrix();
         InputStream is = null;
         Bitmap croppedImage = null;
-        boolean transformed = false ;
+        boolean transformed = false;
         try {
             is = getContentResolver().openInputStream(sourceUri);
             BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
@@ -375,8 +377,8 @@ public class CropImageActivity extends MonitoredActivity {
                     matrix.postScale(exifScale, 1);
                 }
                 if (rect.width() > outWidth || rect.height() > outHeight) {
-                    transformed = true ;
-                    matrix.postScale(((float)outWidth)/((float)rect.width()), ((float)outHeight)/((float)rect.height()));
+                    transformed = true;
+                    matrix.postScale(((float) outWidth) / ((float) rect.width()), ((float) outHeight) / ((float) rect.height()));
                 }
                 if (transformed) {
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
@@ -395,7 +397,7 @@ public class CropImageActivity extends MonitoredActivity {
             setResultException(e);
         } finally {
             CropUtil.closeSilently(is);
-	    // Release memory now
+            // Release memory now
             clearImageView();
         }
         return croppedImage;
