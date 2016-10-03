@@ -193,17 +193,12 @@ class HighlightView {
      * Clip path is broken, unreliable or not supported on:
      * - JellyBean MR1
      * - ICS & ICS MR1 with hardware acceleration turned on
+     * NOTE: 4.1.1 HTC One S not working?
      */
     @SuppressLint("NewApi")
     private boolean isClipPathSupported(Canvas canvas) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return false;
-        } else if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                || Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            return true;
-        } else {
-            return !canvas.isHardwareAccelerated();
-        }
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1
+                || !canvas.isHardwareAccelerated();
     }
 
     private void drawHandles(Canvas canvas) {
