@@ -11,10 +11,7 @@ android {
 }
 
 dependencies {
-    //noinspection GradleDependency,GradleCompatible
-    compile 'com.android.support:support-annotations:24.2.1'
-    //noinspection GradleDependency,GradleCompatible
-    compile 'com.android.support:support-v4:24.2.1'
-    //noinspection GradleDependency,GradleCompatible
-    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile "androidx.annotation:annotation:$androidx"
+    compile 'androidx.legacy:legacy-support-v4:1.0.0'
+    compile "androidx.appcompat:appcompat:$appcompat"
 }
